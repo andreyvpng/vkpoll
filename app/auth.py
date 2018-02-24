@@ -1,4 +1,5 @@
 import requests
+import os
 import psycopg2.extras
 from flask import Blueprint, request, abort, redirect, url_for, session
 from db_helper import get_db
@@ -7,10 +8,12 @@ auth = Blueprint('auth', __name__)
 
 
 def get_vk():
-	db = get_db()
-	cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-	cur.execute('select *from vk_api')
-	return cur.fetchall()[0]
+	ans = {
+		'id': os.environ.get('VK_API_ID'),
+		'secret': os.environ.get('VK_API_SECRET'),
+		'url': os.environ.get('VK_API_URL')
+	}
+	return ans
 
 
 @auth.route('/login')

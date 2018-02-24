@@ -10,9 +10,3 @@ CREATE TABLE entries(
   user_id integer not null,
   FOREIGN KEY (user_id) REFERENCES USERS(id)
 );
-
-CREATE TABLE vk_api(
-    id text not null,
-    secret text not null,
-    url text not null
-);

@@ -22,15 +22,8 @@ def get_db():
 
 
 def init_db(app):
-	db = get_db()
+	db = connect_db()
 	cur = db.cursor()
 	with app.open_resource('schema.sql', mode='r') as f:
 		cur.execute(f.read())
-
-	print('-' * 8)
-	print('VK API')
-	print('write: id secret url')
-	print('-' * 8)
-	vk_id, vk_secret, vk_url = input().split()
-	cur.execute('insert into vk_api (id, secret, url) values(%s, %s, %s)', [vk_id, vk_secret, vk_url])
 	db.commit()

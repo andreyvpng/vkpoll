@@ -1,6 +1,6 @@
 import os
 from flask import Flask, g
-from db_helper import init_db
+from db_helper import init_db, connect_db
 from config import config
 from app.main import main as main_blueprint
 from app.auth import auth as auth_blueprint
