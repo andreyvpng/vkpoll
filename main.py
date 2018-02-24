@@ -6,7 +6,7 @@ from app.main import main as main_blueprint
 from app.auth import auth as auth_blueprint
 
 app = Flask(__name__)
-app.config.from_object(config['development'])
+app.config.from_object(config[os.environ.get('FLASK_CONFIG') or 'development'])
 
 
 @app.cli.command('init_db')
