@@ -4,6 +4,9 @@ from urllib import parse
 
 class Config:
 	SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
+	VK_API_ID = os.environ.get('VK_API_ID')
+	VK_API_SECRET = os.environ.get('VK_API_SECRET')
+	VK_API_URL = os.environ.get('VK_API_URL')
 
 
 class DevelopmentConfig(Config):

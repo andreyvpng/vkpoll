@@ -8,10 +8,11 @@ auth = Blueprint('auth', __name__)
 
 
 def get_vk():
+	from main import app
 	ans = {
-		'id': os.environ.get('VK_API_ID'),
-		'secret': os.environ.get('VK_API_SECRET'),
-		'url': os.environ.get('VK_API_URL')
+		'id': app.config['VK_API_ID'],
+		'secret': app.config['VK_API_SECRET'],
+		'url': app.config['VK_API_URL']
 	}
 	return ans
 
