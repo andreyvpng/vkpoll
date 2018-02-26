@@ -1,8 +1,6 @@
 import requests
-import os
-import psycopg2.extras
 from flask import Blueprint, request, abort, redirect, url_for, session
-from db_helper import get_db
+from db_helper import create_new_user, update_token_of_user, get_user
 
 auth = Blueprint('auth', __name__)
 
@@ -22,6 +20,7 @@ def login():
 	if request.args.get('code') is None:
 		return abort(501)
 
+	# Get api token
 	vk_info = get_vk()
 	data = {
 		'client_id': vk_info['id'],
@@ -29,35 +28,30 @@ def login():
 		'redirect_uri': vk_info['url'],
 		'code': request.args.get('code')
 	}
-	url = 'https://oauth.vk.com/access_token'
-	response = requests.post(url, params=data)
+	response = requests.post('https://oauth.vk.com/access_token', params=data)
 
 	if response.json().get('access_token') is None:
 		abort(501)
 
-	db = get_db()
-	cur = db.cursor()
-	cur.execute('select *from USERS where id = (%s)', [response.json().get('user_id')])
-	check_for_user = cur.fetchall()
-
-	if not check_for_user:
-		cur.execute('insert into USERS (id, token) values(%s, %s)',
-			[response.json().get('user_id'), response.json().get('access_token')])
+	# Check if the user in the database
+	check_of_user = get_user(response.json().get('user_id'))
+	if not check_of_user:
+		create_new_user(response.json().get('user_id'), response.json().get('access_token'))
 	else:
-		cur.execute('update USERS set token = (%s) where id = (%s)',
-				[response.json().get('access_token'), response.json().get('user_id')])
-	db.commit()
+		update_token_of_user(response.json().get('access_token'), response.json().get('user_id'))
 
-	session['logged_in'] = True
-	session['user_id'] = response.json().get('user_id')
-	data = {
-		'user_id': session['user_id']
-	}
+	# Get information about the user
+	data = {'user_id': response.json().get('user_id')}
 	url = 'https://api.vk.com/method/users.get'
-	response = requests.post(url, params=data).json()
-	response = response['response'][0]
-	session['first_name'] = response['first_name']
-	session['last_name'] = response['last_name']
+	response = requests.post(url, params=data).json()['response'][0]
+
+	information_about_user = {
+		'logged_in': True,
+		'user_id': response['uid'],
+		'first_name': response['first_name'],
+		'last_name': response['last_name']
+	}
+	session.update(information_about_user)
 	return redirect(url_for('main.index'))
 
 
