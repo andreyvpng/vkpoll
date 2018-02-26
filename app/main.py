@@ -1,19 +1,18 @@
 from random import choice
 from string import ascii_letters
 from flask import Blueprint, redirect, render_template, session, abort, request, url_for
-from db_helper import get_polls_of_user, get_poll, get_possible_choice, create_new_poll, \
-	create_choice, check_part_in_poll
+from db_helper import get_polls_of_user, get_poll_via_url, get_poll_via_id, get_possible_choice, create_new_poll, \
+	create_choice, check_part_in_poll, delete_poll
 
 main = Blueprint('main', __name__)
 
 
 @main.route('/')
 def index():
-	from main import app
 	polls = None
 	if session.get('logged_in'):
 		polls = get_polls_of_user(session.get('user_id'))
-	return render_template('index.html', vk_id=app.config['VK_API_ID'], vk_url=app.config['VK_API_URL'], polls=polls)
+	return render_template('index.html', polls=polls)
 
 
 @main.route('/add_poll', methods=['GET', 'POST'])
@@ -24,17 +23,25 @@ def add_poll():
 	if request.method == "POST":
 		url_of_poll = ''.join(choice(ascii_letters) for _ in range(30))
 		choices = request.form.getlist('choice')
-		print(request.form['title'])
 		create_new_poll(url_of_poll, session['user_id'], request.form['title'], choices)
 		return redirect(url_for('main.show_poll', url_of_poll=url_of_poll))
 	return render_template('add_poll.html')
 
 
-@main.route('/poll_<url_of_poll>')
-def show_poll(url_of_poll):
+@main.route('/del_poll_<poll_id>', methods=['POST'])
+def dell_poll(poll_id):
 	if not session.get('logged_in'):
 		abort(401)
-	poll = get_poll(url_of_poll)
+
+	poll = get_poll_via_id(poll_id)
+	if poll.get('user_id') == session.get('user_id'):
+		delete_poll(poll_id)
+	return redirect(url_for('main.index'))
+
+
+@main.route('/poll_<url_of_poll>')
+def show_poll(url_of_poll):
+	poll = get_poll_via_url(url_of_poll)
 	if not poll:
 		abort(404)
 

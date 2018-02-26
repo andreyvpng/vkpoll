@@ -72,7 +72,7 @@ def create_new_poll(poll_url, user_id, poll_question, choices):
 	db.commit()
 
 
-def get_poll(url_of_poll):
+def get_poll_via_url(url_of_poll):
 	db = get_db()
 	cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cur.execute('select *from polls where url = (%s)', [url_of_poll])
@@ -87,6 +87,32 @@ def get_poll(url_of_poll):
 			'url': poll['url']
 		}
 	return ans
+
+
+def get_poll_via_id(poll_id):
+	db = get_db()
+	cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	cur.execute('select *from polls where id = (%s)', [poll_id])
+	poll = cur.fetchall()
+	ans = dict()
+	if poll:
+		poll = poll[0]
+		ans = {
+			'title': poll['question'],
+			'id': poll['id'],
+			'user_id': poll['user_id'],
+			'url': poll['url']
+		}
+	return ans
+
+
+def delete_poll(poll_id):
+	db = get_db()
+	cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	cur.execute('delete from user_choice where poll_id = (%s)', [poll_id])
+	cur.execute('delete from possible_choice where poll_id = (%s)', [poll_id])
+	cur.execute('delete from polls where id = (%s)', [poll_id])
+	db.commit()
 
 
 def get_possible_choice(poll_id):
@@ -116,7 +142,6 @@ def check_part_in_poll(user_id, options):
 	for option in options.keys():
 		user_choice['answered'] = user_choice['answered'] or (user_id in options[option]['users'])
 		if user_choice['answered']:
-			print(options[option]['id'])
 			user_choice['choice_id'] = options[option]['id']
 			break
 	return user_choice

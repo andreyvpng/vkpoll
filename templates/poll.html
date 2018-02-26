@@ -31,4 +31,9 @@
             <p>{{ option }}{% if user_choice['choice_id'] == options[option]['id'] %}(Ваш выбор){% endif %} - {{ options[option]['count'] }}</p>
         {% endfor %}
     {% endif %}
+    {% if True %}
+        <form name='myfrm' method='POST' action="{{ url_for('main.dell_poll', poll_id=poll['id']) }}">
+            <button type="submit" class="btn btn-primary">Удалить голование</button>
+        </form>
+    {% endif %}
 {% endblock %}

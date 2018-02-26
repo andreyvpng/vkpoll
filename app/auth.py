@@ -15,6 +15,14 @@ def get_vk():
 	return ans
 
 
+@auth.route('/redirect_to_vk_login', methods=['POST', 'GET'])
+def vk_login():
+	vk_info = get_vk()
+	url = 'https://oauth.vk.com/authorize?client_id=%s&display=popup&redirect_uri=%s&response_type=code&v=5".73' % (
+		vk_info['id'], vk_info['url'])
+	return redirect(url)
+
+
 @auth.route('/login')
 def login():
 	if request.args.get('code') is None:
