@@ -11,11 +11,11 @@ class Config:
 
 class DevelopmentConfig(Config):
 	DEBUG = True
-	DATABASE_NAME = 'new_database'
-	DATABASE_USER = 'postgres'
-	DATABASE_PASSWORD = 'q'
-	DATABASE_HOST = '127.0.0.1'
-	DATABASE_PORT = '5432'
+	DATABASE_NAME = os.environ.get("DATABASE_NAME")
+	DATABASE_USER = os.environ.get("DATABASE_USER")
+	DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
+	DATABASE_HOST = os.environ.get("DATABASE_HOST")
+	DATABASE_PORT = os.environ.get("DATABASE_PORT")
 
 
 class HerokuConfig(Config):
