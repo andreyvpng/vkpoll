@@ -17,6 +17,8 @@ def get_vk():
 
 @auth.route('/redirect_to_vk_login', methods=['POST', 'GET'])
 def vk_login():
+	session['previous_url'] = request.referrer
+
 	vk_info = get_vk()
 	url = 'https://oauth.vk.com/authorize?client_id=%s&display=popup&redirect_uri=%s&response_type=code&v=5".73' % (
 		vk_info['id'], vk_info['url'])
@@ -60,7 +62,7 @@ def login():
 		'last_name': response['last_name']
 	}
 	session.update(information_about_user)
-	return redirect(url_for('main.index'))
+	return redirect(session['previous_url'])
 
 
 @auth.route('/logout')
