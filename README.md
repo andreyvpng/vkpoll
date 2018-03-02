@@ -12,10 +12,12 @@ The project uses [postgresql](https://www.postgresql.org/) databases, so you nee
 > If you use linux instead of 'set', write 'export'
 
     git clone https://github.com/andreyvpng/vkpoll.git
+    cd vkpoll
     pip install -r requirements.txt
     
     set FLASK_APP=main.py
     set DATABASE_NAME=<put_your_settings>
+    set DATABASE_USER=<put_your_settings>
     set DATABASE_PASSWORD=<put_your_settings>
     set DATABASE_HOST=<put_your_settings>
     set DATABASE_PORT=<put_your_settings>
