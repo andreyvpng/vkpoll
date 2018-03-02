@@ -51,15 +51,20 @@ def login():
 		update_token_of_user(response.json().get('access_token'), response.json().get('user_id'))
 
 	# Get information about the user
-	data = {'user_id': response.json().get('user_id')}
+	data = {
+		'user_ids': response.json().get('user_id'),
+		'fields': 'bdate',
+		'v': 5.73
+	}
 	url = 'https://api.vk.com/method/users.get'
-	response = requests.post(url, params=data).json()['response'][0]
+	response = requests.post(url, params=data).json()
+	response = response.get('response')[0]
 
 	information_about_user = {
 		'logged_in': True,
-		'user_id': response['uid'],
-		'first_name': response['first_name'],
-		'last_name': response['last_name']
+		'user_id': response.get('uid'),
+		'first_name': response.get('first_name'),
+		'last_name': response.get('last_name')
 	}
 	session.update(information_about_user)
 	return redirect(session['previous_url'])
