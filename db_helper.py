@@ -83,7 +83,8 @@ def get_poll_via_url(url_of_poll):
 			'title': poll['question'],
 			'id': poll['id'],
 			'user_id': poll['user_id'],
-			'url': poll['url']
+			'url': poll['url'],
+			'time_of_creation': poll['time_of_creation']
 		}
 	return ans
 
@@ -100,7 +101,8 @@ def get_poll_via_id(poll_id):
 			'title': poll['question'],
 			'id': poll['id'],
 			'user_id': poll['user_id'],
-			'url': poll['url']
+			'url': poll['url'],
+			'time_of_creation': poll['time_of_creation']
 		}
 	return ans
 

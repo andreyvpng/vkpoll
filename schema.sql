@@ -13,6 +13,7 @@ CREATE TABLE polls(
     url text not null,
     user_id integer not null,
     question text not null,
+    time_of_creation TIMESTAMPTZ DEFAULT Now(),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

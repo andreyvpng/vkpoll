@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
     <h1>{{ poll['title'] }}</h1>
+    <time class="updated" itemprop="dateModified" datetime="{{ poll['time_of_creation'] }}">
+    </time>
     {% if not user_choice['answered'] %}
     <form action="{{ url_for('main.make_choice') }}" method="post">
         <input type="hidden" name="poll_id" value = "{{ poll['id'] }}" />
@@ -36,4 +38,19 @@
             <button type="submit" class="btn btn-primary">Удалить голование</button>
         </form>
     {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        var now = moment() ;
+        moment.locale();
+
+        $('time').each(function(i, e) {
+            var time = moment($(e).attr('datetime'));
+
+            if(now.diff(time, 'days') <= 1) {
+                $(e).html('<span>' + time.from(now) + '</span>');
+            }
+        });
+    </script>
 {% endblock %}
