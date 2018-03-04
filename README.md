@@ -16,11 +16,8 @@ The project uses [postgresql](https://www.postgresql.org/) databases, so you nee
     pip install -r requirements.txt
 
     set FLASK_APP=main.py
-    set DATABASE_NAME=<put_your_settings>
-    set DATABASE_USER=<put_your_settings>
-    set DATABASE_PASSWORD=<put_your_settings>
-    set DATABASE_HOST=<put_your_settings>
-    set DATABASE_PORT=<put_your_settings>
+    set FLASK_DEBUD=<false or true>
+    set DATABASE_URL=postgresql://[user[:password]@][netloc][:port][/dbname]
 
     set VK_API_ID=<put_your_settings>
     set VK_API_SECRET=<put_your_settings>
