@@ -63,7 +63,6 @@ def create_new_poll(poll_url, user_id, poll_question, choices):
 	db = get_db()
 	cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cur.execute("insert into polls (url, user_id, question) values(%s, %s, %s)", [poll_url, user_id, poll_question])
-
 	cur.execute('select *from polls where url = (%s)', [poll_url])
 	pull_id = cur.fetchall()[0]['id']
 	for possible_choice in choices:
@@ -122,7 +121,7 @@ def get_possible_choice(poll_id):
 	options = cur.fetchall()
 	ans = dict()
 	for option in options:
-		cur.execute("""select user_id from user_choice where poll_id = (%s) and 
+		cur.execute("""select user_id from user_choice where poll_id = (%s) and
 		choice_id= (%s);""", [option['poll_id'], option['id']])
 
 		users = [item[0] for item in cur.fetchall()]
@@ -134,7 +133,7 @@ def get_possible_choice(poll_id):
 	return ans
 
 
-def check_part_in_poll(user_id, options):
+def is_user_take_part(user_id, options):
 	user_choice = {
 		'answered': False,
 		'choice_id': None

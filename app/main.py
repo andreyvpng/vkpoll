@@ -2,7 +2,7 @@ from random import choice
 from string import ascii_letters
 from flask import Blueprint, redirect, render_template, session, abort, request, url_for
 from db_helper import get_polls_of_user, get_poll_via_url, get_poll_via_id, get_possible_choice, create_new_poll, \
-	create_choice, check_part_in_poll, delete_poll
+	create_choice, is_user_take_part, delete_poll
 
 main = Blueprint('main', __name__)
 
@@ -46,7 +46,7 @@ def show_poll(url_of_poll):
 		abort(404)
 
 	options = get_possible_choice(poll['id'])
-	user_choice = check_part_in_poll(session['user_id'], options)
+	user_choice = is_user_take_part(session['user_id'], options)
 	return render_template('poll.html', poll=poll, options=options, user_choice=user_choice)
 
 
@@ -59,7 +59,7 @@ def make_choice():
 	choice_id = request.form.get('choice_id')
 
 	options = get_possible_choice(poll_id)
-	user_choice = check_part_in_poll(session['user_id'], options)
+	user_choice = is_user_take_part(session['user_id'], options)
 
 	if not user_choice['answered']:
 		create_choice(session['user_id'], poll_id, choice_id)

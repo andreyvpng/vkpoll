@@ -62,7 +62,7 @@ def login():
 
 	information_about_user = {
 		'logged_in': True,
-		'user_id': response.get('uid'),
+		'user_id': response.get('id'),
 		'first_name': response.get('first_name'),
 		'last_name': response.get('last_name')
 	}
