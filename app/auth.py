@@ -1,4 +1,5 @@
 import requests
+import urllib
 from flask import Blueprint, request, abort, redirect, url_for, session
 from db_helper import create_new_user, update_token_of_user, get_user
 
@@ -20,8 +21,16 @@ def vk_login():
 	session['previous_url'] = request.referrer
 
 	vk_info = get_vk()
-	url = 'https://oauth.vk.com/authorize?client_id=%s&display=popup&redirect_uri=%s&response_type=code&v=5".73' % (
-		vk_info['id'], vk_info['url'])
+	params = urllib.parse.urlencode(
+		{
+			'client_id': vk_info['id'],
+			'display': 'popup',
+			'redirect_uri': vk_info['url'],
+			'response_type': 'code',
+			'v': 5.73
+		}
+	)
+	url = 'https://oauth.vk.com/authorize?%s' % params
 	return redirect(url)
 
 
