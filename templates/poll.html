@@ -43,7 +43,7 @@
 {% block scripts %}
     <script>
         var now = moment() ;
-        moment.locale();
+        now.locale('ru');
 
         $('time').each(function(i, e) {
             var time = moment($(e).attr('datetime'));
