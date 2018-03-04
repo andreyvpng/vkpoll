@@ -151,3 +151,11 @@ def create_choice(user_id, poll_id, choice_id):
 	cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cur.execute('insert into user_choice(user_id, poll_id, choice_id) values(%s, %s, %s)', [user_id, poll_id, choice_id])
 	db.commit()
+
+
+def is_url_available(url):
+	db = get_db()
+	cur = db.cursor()
+	cur.execute('select from polls where url = (%s)', [url])
+	poll = cur.fetchall()
+	return len(poll) == 0

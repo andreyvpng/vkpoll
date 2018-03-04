@@ -1,10 +1,21 @@
 from random import choice
 from string import ascii_letters
-from flask import Blueprint, redirect, render_template, session, abort, request, url_for
+from functools import wraps
+from flask import Blueprint, redirect, render_template, session, abort, request, url_for, flash
 from db_helper import get_polls_of_user, get_poll_via_url, get_poll_via_id, get_possible_choice, create_new_poll, \
-	create_choice, is_user_take_part, delete_poll
+	create_choice, is_user_take_part, delete_poll, is_url_available
 
 main = Blueprint('main', __name__)
+
+
+def is_logged(func):
+	@wraps(func)
+	def wrapper(*args, **kwargs):
+		if not session.get('logged_in'):
+			flash('Ты не авторизирован!')
+			return redirect(url_for('main.index'))
+		return func(*args, **kwargs)
+	return wrapper
 
 
 @main.route('/')
@@ -16,12 +27,13 @@ def index():
 
 
 @main.route('/add_poll', methods=['GET', 'POST'])
+@is_logged
 def add_poll():
-	if not session.get('logged_in'):
-		abort(401)
-
 	if request.method == "POST":
-		url_of_poll = ''.join(choice(ascii_letters) for _ in range(30))
+		while True:
+			url_of_poll = ''.join(choice(ascii_letters) for _ in range(30))
+			if is_url_available(url_of_poll):
+				break
 		choices = request.form.getlist('choice')
 		create_new_poll(url_of_poll, session['user_id'], request.form['title'], choices)
 		return redirect(url_for('main.show_poll', url_of_poll=url_of_poll))
@@ -29,13 +41,13 @@ def add_poll():
 
 
 @main.route('/del_poll_<poll_id>', methods=['POST'])
+@is_logged
 def dell_poll(poll_id):
-	if not session.get('logged_in'):
-		abort(401)
-
 	poll = get_poll_via_id(poll_id)
 	if poll.get('user_id') == session.get('user_id'):
 		delete_poll(poll_id)
+	else:
+		flash('У тебя нет прав на удаление этого опроса!')
 	return redirect(url_for('main.index'))
 
 
@@ -51,10 +63,8 @@ def show_poll(url_of_poll):
 
 
 @main.route('/make_choice', methods=['POST'])
+@is_logged
 def make_choice():
-	if not session.get('logged_in'):
-		abort(401)
-
 	poll_id = request.form.get('poll_id')
 	choice_id = request.form.get('choice_id')
 
