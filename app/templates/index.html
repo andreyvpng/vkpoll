@@ -1,22 +1,32 @@
 {% extends 'base.html' %}
+
+{% block title %}VK Poll{% endblock %}
 {% block content %}
-<h1 class="mt-5">
-    {% if session['logged_in'] %}
-    Привет, {{ session['first_name'] }} {{ session['last_name'] }}
-    {% else %}
-    Привет
-    {% endif %}
-</h1>
-    {% if session['logged_in'] %}
-    <h3 class="mt-5">Мои опросы:</h3>
-    {% for poll in polls %}
-        <p>
-            <a href="{{ url_for('main.show_poll', url_of_poll=poll.url) }}">
-                {{ poll.question }}
-            </a>
-        </p>
-    {% else %}
-    <p>У вас пока нет опросов, может пора создать? :)</p>
-    {% endfor %}
-    {% endif %}
+    <div class="jumbotron">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <h1 class="display-4">VK Poll</h1>
+                    <p class="lead">
+                      Веб-приложение для создания голосования с авторизацией через ВК. Созданные опросы доступны по приватной ссылке.
+                    </p>
+                    <hr class="my-4">
+                    <p class="lead">
+                      <a class="btn btn-primary btn-lg" href="{{ url_for('auth.vk_login') }}" role="button">Войти через VK</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="container why">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <h2 class="text-center">Возможности сервиса</h2>
+                    <p class="text-center">В VK вы можете создавать опросы только на стене личной или приватной группе. Что не удобно, если вы хотите узнать мнение людей в конференции. Приложение решает эту проблему. </p>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

@@ -1,47 +1,65 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>{{ poll['title'] }}</h1>
-    <time class="updated" itemprop="dateModified" datetime="{{ poll['time_of_creation'] }}">
-    </time>
-    {% if not user_choice['answered'] %}
-    <form action="{{ url_for('main.make_choice') }}" method="post">
-        <input type="hidden" name="poll_id" value = "{{ poll['id'] }}" />
-        <input type="hidden" name="poll_url" value = "{{ poll['url'] }}" />
-        <fieldset class="form-group">
-            <div class="row">
-                <legend class="col-form-label col-sm-2 pt-0">Варианты ответа</legend>
-                <div class="col-sm-10">
-                    {% for option in options.keys()%}
-                    <div class="form-check custom-control custom-radio">
-                        <input class="form-check-input custom-control-input" type="radio" name="choice_id" id="gridRadios{{ options[option]['id'] }}" value="{{ options[option]['id'] }}" checked>
-                        <label class="form-check-label custom-control-label" for="gridRadios{{ options[option]['id'] }}">
-                            {{ option }}
-                        </label>
+    <section class="mt-5">
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="display-4 font-italic">{{ poll['title'] }}</h1>
+                <div class="row">
+                    <div class="col">
+                        <time class="updated" itemprop="dateModified" datetime="{{ poll['time_of_creation'] }}">
+                        </time>
+                        <form method='POST' action="{{ url_for('main.dell_poll', poll_id=poll['id']) }}">
+                            <input class="link" type="submit" value="Удалить" />
+                        </form>
                     </div>
-                    {% endfor %}
+                </div>
+                <div class="row mt-5">
+                    <input id="foo" value="{{ request.base_url  }}">
+                    <button class="btn" data-clipboard-target="#foo">
+                        Скопировать ссылку
+                    </button>
                 </div>
             </div>
-        </fieldset>
-        <div class="form-group row">
-            <div class="col-sm-10">
-              <button type="submit" class="btn btn-primary">Голосовать</button>
+            <div class="poll">
+                {% if not user_choice['answered'] %}
+                <form action="{{ url_for('main.make_choice') }}" method="post">
+                    <input type="hidden" name="poll_id" value = "{{ poll['id'] }}" />
+                    <input type="hidden" name="poll_url" value = "{{ poll['url'] }}" />
+                    <div class="form-group">
+                        <div class="row">
+                            <legend class="col-form-label col-sm-2 pt-0">Варианты ответа</legend>
+                            <div class="col-sm-10">
+                                {% for option in options.keys()%}
+                                <div class="form-check custom-control custom-radio">
+                                    <input class="form-check-input custom-control-input" type="radio" name="choice_id" id="gridRadios{{ options[option]['id'] }}" value="{{ options[option]['id'] }}" checked>
+                                    <label class="form-check-label custom-control-label" for="gridRadios{{ options[option]['id'] }}">
+                                        {{ option }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                          <button type="submit" class="btn btn-primary">Голосовать</button>
+                        </div>
+                    </div>
+                </form>
+                {% else %}
+                    {% for option in options.keys()%}
+                <h3 class="display-6">{{ option }}{% if user_choice['choice_id'] == options[option]['id'] %}<small>(Ваш выбор)</small>{% endif %} - {{ options[option]['count'] }}</h3>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
-    </form>
-    {% else %}
-        {% for option in options.keys()%}
-            <p>{{ option }}{% if user_choice['choice_id'] == options[option]['id'] %}(Ваш выбор){% endif %} - {{ options[option]['count'] }}</p>
-        {% endfor %}
-    {% endif %}
-    {% if True %}
-        <form name='myfrm' method='POST' action="{{ url_for('main.dell_poll', poll_id=poll['id']) }}">
-            <button type="submit" class="btn btn-primary">Удалить голование</button>
-        </form>
-    {% endif %}
+    </section>
 {% endblock %}
 
 {% block scripts %}
     <script>
+        new ClipboardJS('.btn');
+
         var now = moment() ;
         now.locale('ru');
 

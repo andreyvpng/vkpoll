@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}VK Poll - Мои опросы{% endblock %}
+{% block content %}
+    <section class="mt-5">
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="display-4 font-italic">Мои опросы</h1>
+            </div>
+            {% for poll in polls %}
+            <div class="poll">
+                <h1 class="display-6 font-italic">
+                    <a href="{{ url_for('main.show_poll', url_of_poll=poll.url) }}">
+                        {{ poll.question }}
+                    </a>
+                </h1>
+            </div>
+            {% else %}
+            <div class="text-center">
+                <h1 class="display-4">Пока тут ничего нет. Может пора создать опрос? :)</h1>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

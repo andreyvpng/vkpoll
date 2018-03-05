@@ -20,10 +20,10 @@ def is_logged(func):
 
 @main.route('/')
 def index():
-	polls = None
 	if session.get('logged_in'):
 		polls = get_polls_of_user(session.get('user_id'))
-	return render_template('index.html', polls=polls)
+		return render_template('my_polls.html', polls=polls)
+	return render_template('index.html')
 
 
 @main.route('/add_poll', methods=['GET', 'POST'])
