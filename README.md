@@ -30,3 +30,7 @@ Initial database(For first run)
 For run app:
 
     flask run
+    
+For run tests:
+
+    python -m unittest tests\test_app.py

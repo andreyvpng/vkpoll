@@ -4,7 +4,7 @@ from flask import g
 
 
 def connect_db():
-	from main import app
+	from app import app
 	conn = psycopg2.connect(
 		database=app.config['DATABASE_NAME'],
 		user=app.config['DATABASE_USER'],

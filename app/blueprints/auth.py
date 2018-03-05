@@ -1,7 +1,8 @@
 import requests
 import urllib
+from app import app
 from flask import Blueprint, request, abort, redirect, url_for, session
-from db_helper import create_new_user, update_token_of_user, get_user
+from app.db_helper import create_new_user, update_token_of_user, get_user
 
 auth = Blueprint('auth', __name__)
 
@@ -14,6 +15,26 @@ def get_vk():
 		'url': app.config['VK_API_URL']
 	}
 	return ans
+
+
+@auth.route('/testing', methods=['POST'])
+def auth_for_testing():
+	if app.config.get('TESTING'):
+		information_about_user = {
+			'logged_in': True,
+			'user_id': request.form['user_id'],
+			'token': request.form['token'],
+			'first_name': request.form['first_name'],
+			'last_name': request.form['last_name']
+		}
+		session.update(information_about_user)
+		check_of_user = get_user(session['user_id'])
+		if not check_of_user:
+			create_new_user(session['user_id'], session['token'])
+		else:
+			update_token_of_user(session['user_id'], session['token'])
+
+	return redirect(url_for('main.index'))
 
 
 @auth.route('/redirect_to_vk_login', methods=['POST', 'GET'])
@@ -30,6 +51,7 @@ def vk_login():
 			'v': 5.73
 		}
 	)
+
 	url = 'https://oauth.vk.com/authorize?%s' % params
 	return redirect(url)
 

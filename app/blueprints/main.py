@@ -2,7 +2,7 @@ from random import choice
 from string import ascii_letters
 from functools import wraps
 from flask import Blueprint, redirect, render_template, session, abort, request, url_for, flash
-from db_helper import get_polls_of_user, get_poll_via_url, get_poll_via_id, get_possible_choice, create_new_poll, \
+from app.db_helper import get_polls_of_user, get_poll_via_url, get_poll_via_id, get_possible_choice, create_new_poll, \
 	create_choice, is_user_take_part, delete_poll, is_url_available
 
 main = Blueprint('main', __name__)
