@@ -59,7 +59,7 @@ def show_poll(url_of_poll):
 
 	options = get_possible_choice(poll['id'])
 	user_choice = dict()
-	if session['logged_in']:
+	if session.get('logged_in'):
 		user_choice = is_user_take_part(session['user_id'], options)
 	return render_template('poll.html', poll=poll, options=options, user_choice=user_choice)
 
