@@ -8,9 +8,11 @@
                     <div class="col">
                         <time class="updated" itemprop="dateModified" datetime="{{ poll['time_of_creation'] }}">
                         </time>
+                        {% if poll['user_id'] == session['user_id'] %}
                         <form method='POST' action="{{ url_for('main.dell_poll', poll_id=poll['id']) }}">
                             <input class="link" type="submit" value="Удалить" />
                         </form>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row mt-5">
@@ -21,7 +23,7 @@
                 </div>
             </div>
             <div class="poll">
-                {% if not user_choice['answered'] %}
+                {% if not user_choice.get('answered') %}
                 <form action="{{ url_for('main.make_choice') }}" method="post">
                     <input type="hidden" name="poll_id" value = "{{ poll['id'] }}" />
                     <input type="hidden" name="poll_url" value = "{{ poll['url'] }}" />
