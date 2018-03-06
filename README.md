@@ -16,7 +16,7 @@ The project uses [postgresql](https://www.postgresql.org/) databases, so you nee
     pip install -r requirements.txt
 
     set FLASK_APP=main.py
-    set FLASK_DEBUD=<false or true>
+    set FLASK_DEBUG=<false or true>
     set DATABASE_URL=postgresql://[user[:password]@][netloc][:port][/dbname]
 
     set VK_API_ID=<put_your_settings>
@@ -30,7 +30,7 @@ Initial database(For first run)
 For run app:
 
     flask run
-    
+
 For run tests:
 
     python -m unittest tests\test_app.py
