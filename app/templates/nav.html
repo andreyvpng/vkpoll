@@ -1,0 +1,18 @@
+<div class="container mt-5">
+    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+        <header class="masthead mb-auto">
+            <div class="inner">
+                <h3 class="masthead-brand">VK Poll</h3>
+                <nav class="nav nav-masthead justify-content-center">
+                    <a class="nav-link active" href="{{ url_for('main.index') }}">Главная</a>
+                    {% if session.get('logged_in') %}
+                    <a class="nav-link" href="{{ url_for('main.add_poll') }}">Создать опрос</a>
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Выйти</a>
+                    {% else %}
+                    <a class="nav-link" href="{{ url_for('auth.vk_login') }}">Войти через ВК</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </header>
+    </div>
+</div>

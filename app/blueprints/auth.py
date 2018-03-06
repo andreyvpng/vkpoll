@@ -77,9 +77,15 @@ def login():
 	# Check if the user in the database
 	check_of_user = get_user(response.json().get('user_id'))
 	if not check_of_user:
-		create_new_user(response.json().get('user_id'), response.json().get('access_token'))
+		create_new_user(
+			response.json().get('user_id'),
+			response.json().get('access_token')
+		)
 	else:
-		update_token_of_user(response.json().get('access_token'), response.json().get('user_id'))
+		update_token_of_user(
+			response.json().get('access_token'),
+			response.json().get('user_id')
+		)
 
 	# Get information about the user
 	data = {
