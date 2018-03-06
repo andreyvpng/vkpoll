@@ -11,10 +11,11 @@ main = Blueprint('main', __name__)
 
 
 def is_logged(func):
+	""" Processing requests for unauthorized users """
 	@wraps(func)
 	def wrapper(*args, **kwargs):
 		if not session.get('logged_in'):
-			flash('Ты не авторизирован!')
+			flash('You are not authorized!', category='danger')
 			return redirect(url_for('main.index'))
 		return func(*args, **kwargs)
 	return wrapper
@@ -24,8 +25,8 @@ def is_logged(func):
 def index():
 	if session.get('logged_in'):
 		polls = get_polls_of_user(session.get('user_id'))
-		return render_template('my_polls.html', polls=polls)
-	return render_template('index.html')
+		return render_template('my_polls.html', polls=polls), 200
+	return render_template('index.html'), 200
 
 
 @main.route('/add_poll', methods=['GET', 'POST'])
@@ -42,6 +43,7 @@ def add_poll():
 			session['user_id'],
 			request.form['title'], choices
 		)
+		flash('Poll successfully created', category='success')
 		return redirect(url_for('main.show_poll', url_of_poll=url_of_poll))
 	return render_template('add_poll.html')
 
@@ -53,7 +55,12 @@ def dell_poll(poll_id):
 	if poll.get('user_id') == session.get('user_id'):
 		delete_poll(poll_id)
 	else:
-		flash('У тебя нет прав на удаление этого опроса!')
+		flash(
+			'You do not have the right to remove this poll!',
+			category='danger'
+		)
+		return redirect(url_for('main.index'))
+	flash('Poll successfully deleted', category='success')
 	return redirect(url_for('main.index'))
 
 
@@ -83,6 +90,7 @@ def make_choice():
 
 	if not user_choice['answered']:
 		create_choice(session['user_id'], poll_id, choice_id)
+		flash('You have successfully voted', category='success')
 	return redirect(
 		url_for('main.show_poll', url_of_poll=request.form.get('poll_url'))
 	)

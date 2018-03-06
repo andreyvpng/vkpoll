@@ -11,10 +11,10 @@
                         </time>
                         {% if poll['user_id'] == session['user_id'] %}
                         <form method='POST' action="{{ url_for('main.dell_poll', poll_id=poll['id']) }}">
-                            <input class="link" type="submit" value="Удалить" />
+                            <input class="link" type="submit" value="delete" />
                         </form>
                         {% endif %}
-                        <input class="link clipboard" data-clipboard-text="{{ request.base_url }}" value="Скопировать ссылку" />
+                        <input class="link clipboard" data-clipboard-text="{{ request.base_url }}" value="Copy a link" />
                     </div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                     <input type="hidden" name="poll_url" value = "{{ poll['url'] }}" />
                     <div class="form-group">
                         <div class="row">
-                            <legend class="col-form-label col-sm-2 pt-0">Варианты ответа</legend>
+                            <legend class="col-form-label col-sm-2 pt-0">Options</legend>
                             <div class="col-sm-10">
                                 {% for option in options.keys()%}
                                 <div class="form-check custom-control custom-radio">
@@ -41,16 +41,16 @@
                     {% if session.get('logged_in') %}
                     <div class="form-group row">
                         <div class="col-sm-10">
-                          <button type="submit" class="btn btn-primary">Голосовать</button>
+                          <button type="submit" class="btn btn-primary">Vote</button>
                         </div>
                     </div>
                     {% else %}
-                    <p>Чтобы проголосовать необходимо пройти авторизацию!</p>
+                    <p>You need to log in to vote.</p>
                     {% endif %}
                 </form>
                 {% else %}
                     {% for option in options.keys()%}
-                <h3 class="display-6">{{ option }}{% if user_choice['choice_id'] == options[option]['id'] %}<small>(Ваш выбор)</small>{% endif %} - {{ options[option]['count'] }}</h3>
+                <h3 class="display-6">{{ option }}{% if user_choice['choice_id'] == options[option]['id'] %}<small>(your choice)</small>{% endif %} - {{ options[option]['count'] }}</h3>
                     {% endfor %}
                 {% endif %}
             </div>
@@ -62,8 +62,7 @@
     <script>
         new ClipboardJS('.clipboard');
 
-        var now = moment() ;
-        now.locale('ru');
+        var now = moment();
 
         $('time').each(function(i, e) {
             var time = moment($(e).attr('datetime'));

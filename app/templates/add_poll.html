@@ -1,33 +1,35 @@
 {% extends 'base.html' %}
+
+{% block title %}VK Poll - Creating poll{% endblock %}
 {% block content %}
 {% include 'nav.html' %}
 <section class="mt-5">
     <div class="container">
         <div class="jumbotron">
-            <h1 class="display-4 font-italic">Создание опроса</h1>
+            <h1 class="display-4 font-italic">Creating poll</h1>
         </div>
         <form action="{{ url_for('main.add_poll') }}" method="post">
             <div class="form-group row">
-                <label for="colFormLabel" class="col-sm-2 col-form-label">Вопрос</label>
+                <label for="colFormLabel" class="col-sm-2 col-form-label">Title</label>
                 <div class="col-sm-10">
-                  <input class="form-control" id="colFormLabel" name="title" placeholder="Вопрос">
+                  <input class="form-control" id="colFormLabel" name="title" placeholder="Title">
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Варианты:</label>
+                <label class="col-sm-2 col-form-label">Options</label>
                 <div class="col-sm-10 input_fields">
                     <div class="form-group form-row">
                         <div class="col">
                             <input class="form-control" name="choice">
                         </div>
                         <div class="col">
-                            <input type="button" id="add_field" class="btn btn-success mb-2" value="Добавить"></input>
+                            <input type="button" id="add_field" class="btn btn-success mb-2" value="Add"></input>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary mb-2" value="Share">Создать</button>
+                <button type="submit" class="btn btn-primary mb-2" value="Share">Create</button>
             </div>
         </form>
     </div>
@@ -44,7 +46,7 @@
                 if(number < 11){
                     var name = "input";
                     name = name + number;
-                    $(".input_fields").append('<div class="form-group form-row"><div class="col"><input class="form-control" name="choice" type="text" name="' + name + '" /></div><div class="col"><input type="button" class="remove_field btn btn-danger mb-2" value="Удалить"></input></div></div>');
+                    $(".input_fields").append('<div class="form-group form-row"><div class="col"><input class="form-control" name="choice" type="text" name="' + name + '" /></div><div class="col"><input type="button" class="remove_field btn btn-danger mb-2" value="delete"></input></div></div>');
                     number++;
                 }
                 else{

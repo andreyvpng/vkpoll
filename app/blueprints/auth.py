@@ -1,7 +1,7 @@
 import requests
 import urllib
 from app import app
-from flask import Blueprint, request, abort, redirect, url_for, session
+from flask import Blueprint, request, abort, redirect, url_for, session, flash
 from app.db_helper import create_new_user, update_token_of_user, get_user
 
 auth = Blueprint('auth', __name__)
@@ -19,6 +19,7 @@ def get_vk():
 
 @auth.route('/testing', methods=['POST'])
 def auth_for_testing():
+	""" Authorization, which is only used for testing! """
 	if app.config.get('TESTING'):
 		information_about_user = {
 			'logged_in': True,
@@ -39,6 +40,7 @@ def auth_for_testing():
 
 @auth.route('/redirect_to_vk_login', methods=['POST', 'GET'])
 def vk_login():
+	""" Redirecting to VK to get the code """
 	session['previous_url'] = request.referrer
 
 	vk_info = get_vk()
@@ -104,10 +106,12 @@ def login():
 		'last_name': response.get('last_name')
 	}
 	session.update(information_about_user)
+	flash('Welcome! You were logged in', category='success')
 	return redirect(session['previous_url'])
 
 
 @auth.route('/logout')
 def logout():
 	session.clear()
+	flash('You were logged out', category='success')
 	return redirect(url_for('main.index'))
