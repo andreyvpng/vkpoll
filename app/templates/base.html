@@ -9,25 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <title>{% block title %}{% endblock %}</title>
-    <style>
-        input.link {
-          border: none;
-          background: none;
-          color: #00f;
-          text-decoration: underline;
-          cursor: pointer;
-          display: inline;
-          margin: 0;
-          padding: 0;
-        }
-        .footer {
-            padding: 2.5rem 0;
-            color: #999;
-            text-align: center;
-            background-color: #f9f9f9;
-            border-top: .05rem solid #e5e5e5;
-        }
-    </style>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     {% with messages = get_flashed_messages(with_categories=true) %}
