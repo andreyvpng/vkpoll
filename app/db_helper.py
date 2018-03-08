@@ -149,22 +149,32 @@ def get_possible_choice(poll_id):
 	return ans
 
 
-def is_user_take_part(user_id, options):
+def is_user_take_part(user_id, poll_id):
 	user_choice = {
 		'answered': False,
 		'choice_id': None
 	}
-	for option in options.keys():
-		user_choice['answered'] |= (user_id in options[option]['users'])
-		if user_choice['answered']:
-			user_choice['choice_id'] = options[option]['id']
-			break
-	return user_choice
+	db = get_db()
+	cur = db.cursor()
+	cur.execute(
+		'select choice_id from user_choice where user_id = (%s) and poll_id = (%s)',
+		[user_id, poll_id]
+	)
+	choice_id = cur.fetchall()
+	try:
+		choice_id = choice_id[0][0]
+		user_choice = {
+			'answered': True,
+			'choice_id': choice_id
+		}
+		return user_choice
+	except Exception as e:
+		return user_choice
 
 
 def create_choice(user_id, poll_id, choice_id):
 	db = get_db()
-	cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	cur = db.cursor()
 	cur.execute(
 		'insert into user_choice(user_id, poll_id, choice_id) values(%s, %s, %s)',
 		[user_id, poll_id, choice_id]

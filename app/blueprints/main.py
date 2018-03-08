@@ -34,7 +34,7 @@ def index():
 def add_poll():
 	if request.method == "POST":
 		while True:
-			url_of_poll = ''.join(choice(ascii_letters) for _ in range(30))
+			url_of_poll = ''.join(choice(ascii_letters) for _ in range(8))
 			if is_url_available(url_of_poll):
 				break
 		choices = request.form.getlist('choice')
@@ -73,7 +73,7 @@ def show_poll(url_of_poll):
 	options = get_possible_choice(poll['id'])
 	user_choice = dict()
 	if session.get('logged_in'):
-		user_choice = is_user_take_part(session['user_id'], options)
+		user_choice = is_user_take_part(session['user_id'], poll['id'])
 	return render_template(
 		'poll.html', poll=poll, options=options, user_choice=user_choice
 	)
@@ -84,9 +84,7 @@ def show_poll(url_of_poll):
 def make_choice():
 	poll_id = request.form.get('poll_id')
 	choice_id = request.form.get('choice_id')
-
-	options = get_possible_choice(poll_id)
-	user_choice = is_user_take_part(session['user_id'], options)
+	user_choice = is_user_take_part(session['user_id'], poll_id)
 
 	if not user_choice['answered']:
 		create_choice(session['user_id'], poll_id, choice_id)
