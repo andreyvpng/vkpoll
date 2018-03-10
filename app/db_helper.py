@@ -185,6 +185,6 @@ def create_choice(user_id, poll_id, choice_id):
 def is_url_available(url):
 	db = get_db()
 	cur = db.cursor()
-	cur.execute('select from polls where url = (%s)', [url])
+	cur.execute('select *from polls where url = (%s)', [url])
 	poll = cur.fetchall()
 	return len(poll) == 0
