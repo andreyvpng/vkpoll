@@ -37,21 +37,44 @@ class TestCase(unittest.TestCase):
 			logout(c)
 			self.assertFalse(session.get('logged_in'))
 
-	def test_index(self):
-		response = self.app.get('/')
-		self.assertEqual(response.status_code, 200)
+	def test_index_with_authorization(self):
+			with app.test_client() as c:
+				login(c)
+				response = c.get('/')
+				self.assertTrue(b'My polls' in response.data)
+				self.assertEqual(response.status_code, 200)
 
-	def test_add_poll(self):
+	def test_index_without_authorization(self):
+			with app.test_client() as c:
+				response = c.get('/')
+				self.assertTrue(b'Login with VK' in response.data)
+				self.assertEqual(response.status_code, 200)
+
+	def test_add_poll_with_authorization(self):
 		with app.test_client() as c:
 			login(c)
 			response = c.post('/add_poll', data=dict(
 				title='What is your favourite programing language?',
 				choice=['Python', 'Ruby', 'C/C++']
 			), follow_redirects=True)
-			self.assertTrue(b'What is your favourite programing language?' in response.data)
+			self.assertTrue(
+				b'What is your favourite programing language?' in response.data
+			)
 			self.assertTrue(b'Python' in response.data)
 			self.assertTrue(b'Ruby' in response.data)
 			self.assertTrue(b'C/C++' in response.data)
+			self.assertEqual(response.status_code, 200)
+
+	def test_add_poll_without_authorization(self):
+		with app.test_client() as c:
+			response = c.post('/add_poll', data=dict(
+				title='What is your favourite programing language?',
+				choice=['Python', 'Ruby', 'C/C++']
+			), follow_redirects=True)
+			self.assertFalse(
+				b'What is your favourite programing language?' in response.data
+			)
+			self.assertTrue(b'You are not authorized!' in response.data)
 			self.assertEqual(response.status_code, 200)
 
 

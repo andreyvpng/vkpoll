@@ -34,7 +34,8 @@ def index():
 def add_poll():
 	if request.method == "POST":
 		while True:
-			url_of_poll = ''.join(choice(ascii_letters) for _ in range(8))
+			url_length = 8
+			url_of_poll = ''.join(choice(ascii_letters) for _ in range(url_length))
 			if is_url_available(url_of_poll):
 				break
 		choices = request.form.getlist('choice')
