@@ -13,5 +13,6 @@ script:
 
 before_script:
   - export FLASK_APP=main.py
-  - export DATABASE_URL=postgresql://Tester:q@localhost/database_testing
+  - psql -c 'create database database_testing;' -U postgres
+  - export DATABASE_URL=postgresql://postgres@localhost/database_testing
   - flask init_db
