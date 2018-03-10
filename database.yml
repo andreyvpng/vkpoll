@@ -1,5 +1,3 @@
 test:
   adapter: postgresql
   database: database_testing
-  username: Tester
-  password: q
