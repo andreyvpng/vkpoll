@@ -1,4 +1,7 @@
 # VKPOLL
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ec5d951423a34c7cbc3756d27ac88961)](https://app.codacy.com/app/varf.andrey/vkpoll?utm_source=github.com&utm_medium=referral&utm_content=andreyvpng/vkpoll&utm_campaign=badger)
+
 > Web application for creating private voting with authorization via VK.
 > Created polls are available on a private link.
 
