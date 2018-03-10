@@ -1,0 +1,17 @@
+language: python
+python:
+  - "3.6"
+
+services:
+  - postgresql
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - python -m unittest tests\test_app.py
+
+before_script:
+  - export FLASK_APP=main.py
+  - export DATABASE_URL=postgresql://Tester:q@localhost/database_testing
+  - flask init_db
