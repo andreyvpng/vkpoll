@@ -10,7 +10,7 @@ database = DataBase(app)   # connection database
 
 @app.cli.command('init_db')
 def init_db_command():
-	DataBase.init_db(app)
+	database.init_db(app)
 	print('Initialized the database.')
 
 
