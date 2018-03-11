@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}VK Poll - {{ poll['title'] }}{% endblock %}
+{% block title %}VK Poll - {{ poll['question'] }}{% endblock %}
 {% block content %}
 {% include 'nav.html' %}
     <section class="mt-5">
         <div class="container">
             <div class="jumbotron">
-                <h1 class="display-4 font-italic">{{ poll['title'] }}</h1>
+                <h1 class="display-4 font-italic">{{ poll['question'] }}</h1>
                 <div class="row">
                     <div class="col">
                         <time class="updated" itemprop="dateModified" datetime="{{ poll['time_of_creation'] }}">
@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="poll">
-                {% if not user_choice.get('answered') %}
+                {% if not user_choice %}
                 <form action="{{ url_for('main.make_choice') }}" method="post">
                     <input type="hidden" name="poll_id" value = "{{ poll['id'] }}" />
                     <input type="hidden" name="poll_url" value = "{{ poll['url'] }}" />
@@ -52,7 +52,7 @@
                 </form>
                 {% else %}
                     {% for option in options.keys()%}
-                <h3 class="display-6">{{ option }}{% if user_choice['choice_id'] == options[option]['id'] %}<small>(your choice)</small>{% endif %} - {{ options[option]['count'] }}</h3>
+                <h3 class="display-6">{{ option }}{% if user_choice == options[option]['id'] %}<small>(your choice)</small>{% endif %} - {{ options[option]['count'] }}</h3>
                     {% endfor %}
                 {% endif %}
             </div>

@@ -10,7 +10,6 @@ class Config:
 
 	parse.uses_netloc.append("postgres")
 	url = parse.urlparse(os.environ.get("DATABASE_URL"))
-	
 	DATABASE_NAME = url.path[1:]
 	DATABASE_USER = url.username
 	DATABASE_PASSWORD = url.password

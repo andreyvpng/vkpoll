@@ -2,7 +2,7 @@ import unittest
 from flask import session
 from app import app
 from config import config
-from app.db_helper import init_db
+from app.database import init_db
 
 
 def login(application):

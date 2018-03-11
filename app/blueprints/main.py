@@ -3,9 +3,7 @@ from string import ascii_letters
 from functools import wraps
 from flask import Blueprint, redirect, render_template, session, abort, \
 	request, url_for, flash
-from app.db_helper import get_polls_of_user, get_poll_via_url, \
-	get_poll_via_id, get_possible_choice, create_new_poll, \
-	create_choice, is_user_take_part, delete_poll, is_url_available
+from app import database
 
 main = Blueprint('main', __name__)
 
@@ -24,7 +22,7 @@ def is_logged(func):
 @main.route('/')
 def index():
 	if session.get('logged_in'):
-		polls = get_polls_of_user(session.get('user_id'))
+		polls = database.get_polls_of_user(session.get('user_id'))
 		return render_template('my_polls.html', polls=polls), 200
 	return render_template('index.html'), 200
 
@@ -36,10 +34,10 @@ def add_poll():
 		while True:
 			url_length = 8
 			url_of_poll = ''.join(choice(ascii_letters) for _ in range(url_length))
-			if is_url_available(url_of_poll):
+			if database.is_url_available(url_of_poll):
 				break
 		choices = request.form.getlist('choice')
-		create_new_poll(
+		database.create_new_poll(
 			url_of_poll,
 			session['user_id'],
 			request.form['title'], choices
@@ -52,9 +50,9 @@ def add_poll():
 @main.route('/del_poll_<poll_id>', methods=['POST'])
 @is_logged
 def dell_poll(poll_id):
-	poll = get_poll_via_id(poll_id)
+	poll = database.get_poll_via_id(poll_id)
 	if poll.get('user_id') == session.get('user_id'):
-		delete_poll(poll_id)
+		database.delete_poll(poll_id)
 	else:
 		flash(
 			'You do not have the right to remove this poll!',
@@ -67,14 +65,14 @@ def dell_poll(poll_id):
 
 @main.route('/poll_<url_of_poll>')
 def show_poll(url_of_poll):
-	poll = get_poll_via_url(url_of_poll)
+	poll = database.get_poll_via_url(url_of_poll)
 	if not poll:
 		abort(404)
 
-	options = get_possible_choice(poll['id'])
-	user_choice = dict()
+	options = database.get_possible_choice(poll['id'])
+	user_choice = None
 	if session.get('logged_in'):
-		user_choice = is_user_take_part(session['user_id'], poll['id'])
+		user_choice = database.is_user_take_part(session['user_id'], poll['id'])
 	return render_template(
 		'poll.html', poll=poll, options=options, user_choice=user_choice
 	)
@@ -85,10 +83,10 @@ def show_poll(url_of_poll):
 def make_choice():
 	poll_id = request.form.get('poll_id')
 	choice_id = request.form.get('choice_id')
-	user_choice = is_user_take_part(session['user_id'], poll_id)
+	user_choice = database.is_user_take_part(session['user_id'], poll_id)
 
 	if not user_choice['answered']:
-		create_choice(session['user_id'], poll_id, choice_id)
+		database.create_choice(session['user_id'], poll_id, choice_id)
 		flash('You have successfully voted', category='success')
 	return redirect(
 		url_for('main.show_poll', url_of_poll=request.form.get('poll_url'))

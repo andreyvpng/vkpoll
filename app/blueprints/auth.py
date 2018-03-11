@@ -1,8 +1,7 @@
 import requests
-import urllib
-from app import app
+import urllib.parse
+from app import app, database
 from flask import Blueprint, request, abort, redirect, url_for, session, flash
-from app.db_helper import create_new_user, update_token_of_user, get_user
 
 auth = Blueprint('auth', __name__)
 
@@ -29,11 +28,11 @@ def auth_for_testing():
 			'last_name': request.form['last_name']
 		}
 		session.update(information_about_user)
-		check_of_user = get_user(session['user_id'])
+		check_of_user = database.get_user(session['user_id'])
 		if not check_of_user:
-			create_new_user(session['user_id'], session['token'])
+			database.create_new_user(session['user_id'], session['token'])
 		else:
-			update_token_of_user(session['user_id'], session['token'])
+			database.update_token_of_user(session['user_id'], session['token'])
 
 	return redirect(url_for('main.index'))
 
@@ -77,14 +76,14 @@ def login():
 		abort(501)
 
 	# Check if the user in the database
-	check_of_user = get_user(response.json().get('user_id'))
+	check_of_user = database.get_user(response.json().get('user_id'))
 	if not check_of_user:
-		create_new_user(
+		database.create_new_user(
 			response.json().get('user_id'),
 			response.json().get('access_token')
 		)
 	else:
-		update_token_of_user(
+		database.update_token_of_user(
 			response.json().get('access_token'),
 			response.json().get('user_id')
 		)
