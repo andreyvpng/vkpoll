@@ -85,7 +85,7 @@ def make_choice():
 	choice_id = request.form.get('choice_id')
 	user_choice = database.is_user_take_part(session['user_id'], poll_id)
 
-	if not user_choice['answered']:
+	if not user_choice:
 		database.create_choice(session['user_id'], poll_id, choice_id)
 		flash('You have successfully voted', category='success')
 	return redirect(

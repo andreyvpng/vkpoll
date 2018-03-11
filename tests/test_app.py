@@ -1,8 +1,7 @@
 import unittest
 from flask import session
-from app import app
+from app import app, database
 from config import config
-from app.database import init_db
 
 
 def login(application):
@@ -24,7 +23,7 @@ class TestCase(unittest.TestCase):
 	def setUp(self):
 		app.config.from_object(config['tests'])
 		self.app = app.test_client()
-		init_db(app)
+		database.init_db(app)
 		self.assertFalse(app.debug)
 
 	def tearDown(self):
