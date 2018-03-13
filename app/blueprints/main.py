@@ -37,17 +37,28 @@ def add_poll():
     if request.method == "POST":
         while True:
             url_length = 8
-            url_of_poll = ''.join(choice(ascii_letters) for _ in range(url_length))
+            url_of_poll = ''.join(choice(ascii_letters) for _ in range(
+                url_length))
             if database.is_url_available(url_of_poll):
                 break
+
+        question = request.form['title']
         choices = request.form.getlist('choice')
-        database.create_new_poll(
-            url_of_poll,
-            session['user_id'],
-            request.form['title'], choices
-        )
-        flash('Poll successfully created', category='success')
-        return redirect(url_for('main.show_poll', url_of_poll=url_of_poll))
+        choices = [item for item in choices if item]
+
+        if not question:
+            flash('error title', category='danger')
+        elif not choices:
+            flash('error choices', category='danger')
+        else:
+            database.create_new_poll(
+                url_of_poll,
+                session['user_id'],
+                question,
+                choices
+            )
+            flash('Poll successfully created', category='success')
+            return redirect(url_for('main.show_poll', url_of_poll=url_of_poll))
     return render_template('add_poll.html')
 
 
@@ -76,7 +87,10 @@ def show_poll(url_of_poll):
     options = database.get_possible_choice(poll['id'])
     user_choice = None
     if session.get('logged_in'):
-        user_choice = database.is_user_take_part(session['user_id'], poll['id'])
+        user_choice = database.is_user_take_part(
+            session['user_id'],
+            poll['id']
+        )
     return render_template(
         'poll.html', poll=poll, options=options, user_choice=user_choice
     )
@@ -87,6 +101,11 @@ def show_poll(url_of_poll):
 def make_choice():
     poll_id = request.form.get('poll_id')
     choice_id = request.form.get('choice_id')
+
+    if not database.does_poll_exist(poll_id, choice_id):
+        flash('Error. Invalid request', category='danger')
+        return redirect(url_for('main.index'))
+
     user_choice = database.is_user_take_part(session['user_id'], poll_id)
 
     if not user_choice:

@@ -173,9 +173,19 @@ class DataBase:
         tablenames = self.cursor.fetchall()
         for tablename in tablenames:
             name = tablename[0]
-            # why dont work this?
-            # self.cursor.execute('select count(*) from (%s)', [name])
             self.cursor.execute('select count(*) from {0}'.format(name))
             stats[name] = self.cursor.fetchall()[0][0]
 
         return stats
+
+    def does_poll_exist(self, poll_id, choice_id):
+        self.cursor.execute("""
+            select * 
+            from possible_choice
+            where poll_id = (%s) and id = (%s)
+        """, [poll_id, choice_id])
+
+        poll = self.cursor.fetchall()
+        if poll:
+            return True
+        return False
