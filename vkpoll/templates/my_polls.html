@@ -11,8 +11,8 @@
         {% for poll in polls %}
         <div class="poll">
             <h1 class="display-6 font-italic">
-                <a href="{{ url_for('main.show_poll', url_of_poll=poll.url) }}">
-                    {{ poll.question }}
+                <a href="{{ url_for('poll.show_poll', url_of_poll=poll.url) }}">
+                    {{ poll.title }}
                 </a>
             </h1>
         </div>

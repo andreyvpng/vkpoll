@@ -1,15 +1,16 @@
 import urllib.parse
 
 import requests
-from flask import Blueprint, request, abort, redirect, url_for, session, flash
+from flask import Blueprint, session, request, redirect, abort, flash, url_for
 
-from app import app, database
+from vkpoll import db
+from ..models import User
 
-auth = Blueprint('auth', __name__)
+auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 def get_vk():
-    from main import app
+    from vkpoll import app
     ans = {
         'id': app.config['VK_API_ID'],
         'secret': app.config['VK_API_SECRET'],
@@ -18,29 +19,8 @@ def get_vk():
     return ans
 
 
-@auth.route('/testing', methods=['POST'])
-def auth_for_testing():
-    """ Authorization, which is only used for testing! """
-    if app.config.get('TESTING'):
-        information_about_user = {
-            'logged_in': True,
-            'user_id': request.form['user_id'],
-            'token': request.form['token'],
-            'first_name': request.form['first_name'],
-            'last_name': request.form['last_name']
-        }
-        session.update(information_about_user)
-        check_of_user = database.get_user(session['user_id'])
-        if not check_of_user:
-            database.create_new_user(session['user_id'], session['token'])
-        else:
-            database.update_token_of_user(session['user_id'], session['token'])
-
-    return redirect(url_for('main.index'))
-
-
-@auth.route('/redirect_to_vk_login', methods=['POST', 'GET'])
-def vk_login():
+@auth.route('/')
+def login():
     """ Redirecting to VK to get the code """
     session['previous_url'] = request.referrer
 
@@ -55,12 +35,12 @@ def vk_login():
         }
     )
 
-    url = 'https://oauth.vk.com/authorize?%s' % params
+    url = 'https://oauth.vk.com/authorize?{0}'.format(params)
     return redirect(url)
 
 
-@auth.route('/login')
-def login():
+@auth.route('/get_token')
+def get_token():
     if request.args.get('code') is None:
         return abort(501)
 
@@ -78,17 +58,18 @@ def login():
         abort(501)
 
     # Check if the user in the database
-    check_of_user = database.get_user(response.json().get('user_id'))
+    check_of_user = User.query.filter_by(
+        id=response.json().get('user_id')).first()
     if not check_of_user:
-        database.create_new_user(
+        new_user = User(
             response.json().get('user_id'),
             response.json().get('access_token')
         )
+        db.session.add(new_user)
     else:
-        database.update_token_of_user(
-            response.json().get('access_token'),
-            response.json().get('user_id')
-        )
+        check_of_user.update(response.json().get('access_token'))
+
+    db.session.commit()
 
     # Get information about the user
     data = {
@@ -102,7 +83,7 @@ def login():
 
     information_about_user = {
         'logged_in': True,
-        'user_id': response.get('id'),
+        'id': response.get('id'),
         'first_name': response.get('first_name'),
         'last_name': response.get('last_name')
     }
@@ -115,4 +96,4 @@ def login():
 def logout():
     session.clear()
     flash('You were logged out', category='success')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('index'))

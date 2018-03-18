@@ -1,0 +1,5 @@
+<a href="{{ url_for('auth.login') }}" role="button">Login with VK</a>
+
+{% if session.get('logged_in') %}
+    ok
+{% endif %}

@@ -1,0 +1,15 @@
+{{ poll.title }}
+{{ poll.pub_date }}
+<form method='POST' action="{{ url_for('poll.delete') }}">
+    {{ DeletePollForm.poll_id }}
+    {{ DeletePollForm.submit }}
+</form>
+<form method='POST' action="{{ url_for('poll.make_choice') }}">
+    {{ VotePollForm.poll_id }}
+    {{ VotePollForm.poll_url }}
+    {{ VotePollForm.options }}
+    {{ VotePollForm.submit }}
+</form>
+{% for option in options %}
+    <p>{{ option.text }} - {{ option.id }}</p>
+{% endfor %}

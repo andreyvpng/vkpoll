@@ -1,0 +1,5 @@
+{% for poll in polls %}
+    <a href="{{ url_for('poll.show_poll', url_of_poll=poll.url) }}">
+        <h1>{{ poll.title }}</h1>
+    </a>
+{% endfor %}

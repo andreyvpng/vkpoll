@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}VK Poll - {{ poll.title }}{% endblock %}
+{% block content %}
+{% include 'nav.html' %}
+    <section class="mt-5">
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="display-4 font-italic">{{ poll.title }}</h1>
+                <div class="row">
+                    <div class="col">
+                        <time class="updated" itemprop="dateModified" datetime="{{ poll.pub_date }}"></time>
+                        {% if poll.user_id == session['id'] %}
+                            <form method='POST' action="{{ url_for('poll.delete') }}">
+                                {{ DeletePollForm.poll_id }}
+                                {{ DeletePollForm.submit(class="btn btn-primary mb-2") }}
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <input class="btn btn-primary mb-2 clipboard" type="button" data-clipboard-text="{{ request.base_url }}" value="Copy a link" />
+                    </div>
+                </div>
+            </div>
+            <div class="poll">
+                {% if is_user_take_part %}
+                <form method='POST' action="{{ url_for('poll.make_choice') }}">
+                    {{ VotePollForm.poll_id }}
+                    {{ VotePollForm.poll_url }}
+                    {{ VotePollForm.options }}
+                    {{ VotePollForm.submit }}
+                </form>
+                {% else %}
+                {% for option in options %}
+                    <p>{{ option.text }} - {{ option.id }}</p>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        new ClipboardJS('.clipboard');
+
+        var now = moment();
+
+        $('time').each(function(i, e) {
+            var time = moment($(e).attr('datetime'));
+
+            if(now.diff(time, 'days') <= 1) {
+                $(e).html('<span>' + time.from(now) + '</span>');
+            }
+        });
+    </script>
+{% endblock %}

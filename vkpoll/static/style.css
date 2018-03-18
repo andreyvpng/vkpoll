@@ -1,0 +1,55 @@
+.header {
+    min-height: 30rem;
+    position: relative;
+    display: table;
+    width: 100%;
+    height: auto;
+    padding-top: 11rem;
+    padding-bottom: 11rem;
+    background: url(bg.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.header h1 {
+    font-size: 4rem;
+    margin: 0;
+    padding: 0;
+}
+.btn-primary {
+    background-color: #1d809f!important;
+    border-color: #1d809f!important;
+    color: #fff!important;
+}
+.btn {
+    box-shadow: 0 3px 3px 0 rgba(0,0,0,.1);
+    font-weight: 700;
+}
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.btn-xl {
+    padding: 1.25rem 2.5rem;
+}
+.content-section {
+    padding-top: 7.5rem;
+    padding-bottom: 7.5rem;
+}
+footer.footer {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+}
