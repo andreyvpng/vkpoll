@@ -1,7 +1,0 @@
-<form method="POST" action="{{ url_for('form') }}">
-    {{ form.csrf_token }}
-    {{ form.title.label }} {{ form.title(size=20) }}
-    {{ form.options }}
-    {{ form.submit }}
-    <input type="submit" value="Go">
-</form>
