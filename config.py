@@ -17,17 +17,16 @@ class Config:
     VK_API_SECRET = os.environ.get('VK_API_SECRET')
     VK_API_URL = os.environ.get('VK_API_URL')
 
-    # DATABASE_NAME = url.path[1:]
-    # DATABASE_USER = url.username
-    # DATABASE_PASSWORD = url.password
-    # DATABASE_HOST = url.hostname
-    # DATABASE_PORT = url.port
-
 
 class DevelopmentConfig(Config):
     DEBUG = True
 
 
+class HerokuConfig(Config):
+    DEBUG = False
+
+
 config = {
+    'heroku': HerokuConfig,
     'development': DevelopmentConfig
 }
