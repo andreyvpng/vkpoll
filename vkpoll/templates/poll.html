@@ -2,53 +2,88 @@
 
 {% block title %}VK Poll - {{ poll.title }}{% endblock %}
 {% block content %}
-{% include 'nav.html' %}
-    <section class="mt-5">
-        <div class="container">
-            <div class="jumbotron">
-                <h1 class="display-4 font-italic">{{ poll.title }}</h1>
-                <div class="row">
-                    <div class="col">
-                        <time class="updated" itemprop="dateModified" datetime="{{ poll.pub_date }}"></time>
-                        {% if poll.user_id == session['id'] %}
-                            <form method='POST' action="{{ url_for('poll.delete') }}">
-                                {{ DeletePollForm.poll_id }}
-                                {{ DeletePollForm.submit(class="btn btn-primary mb-2") }}
-                            </form>
-                        {% endif %}
-                    </div>
-                    <div class="row">
-                        <input class="btn btn-primary mb-2 clipboard" type="button" data-clipboard-text="{{ request.base_url }}" value="Copy a link" />
-                    </div>
+
+<h3>What is your favourite language?</h3>
+<div class="mt-4 mb-4 media">
+    <img id="image_of_user" class="align-self-start mr-3" src="">
+    <div class="media-body">
+        <a href="https://vk.com/id{{ poll.user_id }}"><h6 id="name_of_user" class="mt-0"></h6></a>
+        <p><time class="updated" itemprop="dateModified" datetime="{{ poll.pub_date }}"></time></p>
+    </div>
+</div>
+{% if poll.user_id == session['id'] %}
+<form class="d-inline" method='POST' action="{{ url_for('poll.delete') }}">
+    {{ DeletePollForm.poll_id }}
+    {{ DeletePollForm.submit(class="btn btx-1 btn-primary mb-2") }}
+</form>
+{% endif %}
+<input class="d-inline btn btn-primary mb-2 clipboard" type="button" data-clipboard-text="{{ request.base_url }}" value="Copy a link" />
+{% if not ((session.get('logged_in') and not is_user_take_part) or (not session.get('logged_in') and is_user_take_part)) %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Option</th>
+                <th scope="col">Score</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for option in options %}
+            <tr>
+                <td>{{ option['text'] }}</td>
+                <td>{{ option['score'] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <form action="{{ url_for('poll.make_choice') }}" method="post">
+        {{ VotePollForm.poll_id }}
+        {{ VotePollForm.poll_url }}
+        <div class="form-group">
+            <div class="row">
+                <legend class="col-form-label col-3 pt-0">Options</legend>
+                <div class="col-9">
+                    <ul id="options" class="list-inline">
+                    {% for option in VotePollForm.options %}
+                        <li>
+                            <div class="form-check form-check-inline">
+                                {{ option(class="form-check-input") }}
+                                <label class="form-check-label">{{ option.label }}</label>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    </ul>
                 </div>
             </div>
-            <div class="poll">
-                {% if is_user_take_part %}
-                <form method='POST' action="{{ url_for('poll.make_choice') }}">
-                    {{ VotePollForm.poll_id }}
-                    {{ VotePollForm.poll_url }}
-                    {{ VotePollForm.options }}
-                    {{ VotePollForm.submit }}
-                </form>
-                {% else %}
-                {% for option in options %}
-                    <p>{{ option.text }} - {{ option.id }}</p>
-                {% endfor %}
-                {% endif %}
-            </div>
         </div>
-    </section>
+        {{ VotePollForm.submit(class="btn btn-primary") }}
+    </form>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        new ClipboardJS('.clipboard');
+    <script type="text/javascript">
+        new ClipboardJS('.btn');
+
+        var user_id = {{ poll.user_id }}
+        var req="https://api.vk.com/method/users.get?user_ids=" + user_id + "&fields=photo_50&v=5.73"
+        $(document).ready(function() {
+            $.ajax({
+                url: req,
+                dataType: "jsonp",
+                success: function(e){
+                    var first_name = e.response[0].first_name;
+                    $('#image_of_user').attr('src', e.response[0]["photo_50"]);
+                    $('#name_of_user').text(e.response[0]["first_name"] + ' ' + e.response[0]["last_name"]);
+                    console.log(e.response[0]["photo_50"])
+                }
+            });
+        });
 
         var now = moment();
-
         $('time').each(function(i, e) {
             var time = moment($(e).attr('datetime'));
-
             if(now.diff(time, 'days') <= 1) {
                 $(e).html('<span>' + time.from(now) + '</span>');
             }

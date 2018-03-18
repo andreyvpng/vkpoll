@@ -2,12 +2,9 @@
 
 {% block title %}VK Poll - Creating poll{% endblock %}
 {% block content %}
-{% include 'nav.html' %}
 <section class="mt-5">
     <div class="container">
-        <div class="jumbotron">
-            <h1 class="display-4 font-italic">Creating poll</h1>
-        </div>
+        <h1 class="display-4 mb-4 font-italic">Creating poll</h1>
         <form action="{{ url_for('poll.new') }}" method="post">
             {{ form.hidden_tag() }}
             <div class="form-group row">

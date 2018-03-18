@@ -32,24 +32,36 @@ def show_poll(url_of_poll):
         abort(404)
 
     options = Choice.query.filter_by(poll_id=current_poll.id).all()
+
+    options_table = [
+        {
+            'text': option.text,
+            'score': len(ChoiceUser.query.filter_by(
+                poll_id=current_poll.id,
+                choice_id=option.id
+            ).all())
+        }
+        for option in options
+    ]
+
     vote_poll_form = VotePollForm(
         poll_id=current_poll.id,
         poll_url=current_poll.url,
-        options=[(option.id, option.text) for option in options]
     )
+
     vote_poll_form.options.choices = [
         (option.id, option.text) for option in options
     ]
 
     is_user_take_part = ChoiceUser.query.filter_by(
         poll_id=current_poll.id,
-        user_id=session['id']
-    ).all() == []
+        user_id=session.get('id')
+    ).all() != []
 
     return render_template(
         'poll.html',
         poll=current_poll,
-        options=options,
+        options=options_table,
         DeletePollForm=DeletePollForm(poll_id=current_poll.id),
         VotePollForm=vote_poll_form,
         is_user_take_part=is_user_take_part
@@ -105,20 +117,20 @@ def new():
 @is_logged
 def delete():
     form = DeletePollForm()
-    poll_ = Poll.query.filter_by(id=form.poll_id.data).first()
-    if poll_:
+    poll_ = Poll.query.filter_by(id=form.poll_id.data).all()
+    if not poll_:
         flash('This poll does not exist', category='danger')
-    elif poll_.user_id == session.get('id'):
-        choice_of_users = ChoiceUser.query.filter_by(poll_id=poll_.id).all()
+    elif poll_[0].user_id == session.get('id'):
+        choice_of_users = ChoiceUser.query.filter_by(poll_id=poll_[0].id).all()
         for choice_user in choice_of_users:
             db.session.delete(choice_user)
 
-        options = Choice.query.filter_by(poll_id=poll_.id).all()
+        options = Choice.query.filter_by(poll_id=poll_[0].id).all()
         for option in options:
             db.session.delete(option)
 
         db.session.commit()
-        db.session.delete(poll_)
+        db.session.delete(poll_[0])
         db.session.commit()
 
         flash('Poll successfully deleted', category='success')
@@ -134,8 +146,12 @@ def delete():
 def make_choice():
     form = VotePollForm()
 
-    current_poll = Poll.query.filter_by(id=form.poll_id.data).first()
-    if not current_poll:
+    check_of_poll = Choice.query.filter_by(
+        poll_id=form.poll_id.data,
+        id=form.options.data
+    ).first()
+
+    if not check_of_poll:
         flash('This poll does not exist', category='danger')
         return redirect(url_for('index'))
 

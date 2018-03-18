@@ -27,7 +27,7 @@ class Poll(db.Model):
         self.url = url
         self.title = title
         self.user_id = user_id
-        self.pub_date = datetime.utcnow()
+        self.pub_date = datetime.now()
 
 
 class Choice(db.Model):

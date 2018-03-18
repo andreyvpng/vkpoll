@@ -2,23 +2,20 @@
 
 {% block title %}VK Poll - My polls{% endblock %}
 {% block content %}
-{% include 'nav.html' %}
 <section class="mt-5">
     <div class="container">
-        <div class="jumbotron">
-            <h1 class="display-4 font-italic">My polls</h1>
-        </div>
+        <h1 class="display-4 mb-4 font-italic">My polls</h1>
         {% for poll in polls %}
         <div class="poll">
-            <h1 class="display-6 font-italic">
+            <h4 class="display-6 font-italic">
                 <a href="{{ url_for('poll.show_poll', url_of_poll=poll.url) }}">
                     {{ poll.title }}
                 </a>
-            </h1>
+            </h4>
         </div>
         {% else %}
         <div class="text-center">
-            <h1 class="display-4">There's nothing here. Maybe it's time to create a poll? :)</h1>
+            <h5>There's nothing here. Maybe it's time to create a poll? :)</h5>
         </div>
         {% endfor %}
     </div>
