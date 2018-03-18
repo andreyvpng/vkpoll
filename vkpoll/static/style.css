@@ -43,7 +43,7 @@
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 .btn-xl {
-    padding: 1.25rem 2.5rem;
+    padding: 15px 30px;
 }
 .content-section {
     padding-top: 7.5rem;
