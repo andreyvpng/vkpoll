@@ -7,21 +7,18 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 
 app = Flask(__name__)
-db = SQLAlchemy()
-migrate = Migrate()
-db.init_app(app)
-migrate.init_app(app, db)
+db = SQLAlchemy(app)
+migrate = Migrate(app)
 
 
-def create_app():
+def create_app(name_of_config):
     from vkpoll.blueprints.auth import auth
     app.register_blueprint(auth)
 
     from vkpoll.blueprints.poll import poll
     app.register_blueprint(poll)
 
-    app.config.from_object(
-        config[os.environ.get('FLASK_CONFIG') or 'development'])
+    app.config.from_object(config[name_of_config])
 
     @app.route('/')
     def index():

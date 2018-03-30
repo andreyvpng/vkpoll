@@ -19,6 +19,27 @@ def get_vk():
     return ans
 
 
+@auth.route('/testing', methods=['POST'])
+def login_testing():
+    from vkpoll import app
+    if app.config.get('testing'):
+        information_about_user = {
+            'logged_in': True,
+            'id': request.form['user_id'],
+            'token': request.form['token'],
+            'first_name': request.form['first_name'],
+            'last_name': request.form['last_name']
+        }
+        session.update(information_about_user)
+        check_of_user = User.query.filter_by(id=session['id']).all()
+        if not check_of_user:
+            db.session.add(User(session['id'], session['token']))
+        else:
+            check_of_user[0].update(session['token'])
+
+    return 'ID: %s' % session.get('id')
+
+
 @auth.route('/')
 def login():
     """ Redirecting to VK to get the code """

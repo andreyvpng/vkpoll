@@ -26,7 +26,13 @@ class HerokuConfig(Config):
     DEBUG = False
 
 
+class TestingConfig(Config):
+    DEBUG = False
+    TESTING = True
+
+
 config = {
     'heroku': HerokuConfig,
-    'development': DevelopmentConfig
+    'development': DevelopmentConfig,
+    'testing': TestingConfig
 }

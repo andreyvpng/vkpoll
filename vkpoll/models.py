@@ -6,6 +6,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(100))
 
+    def __init__(self, user_id, token):
+        self.id = user_id
+        self.token = token
+
     def update(self, user_token):
         self.token = user_token
 
